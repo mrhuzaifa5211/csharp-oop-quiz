@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C# OOP College-Style MCQ Exam</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <p class="badge">C# / .NET</p>
+    <h1>C# OOP College-Style MCQ Exam</h1>
+    <p class="subtitle">30 Questions • 30 Marks • 1 mark each • No negative marking</p>
+  </header>
+
+  <div id="start-screen" class="card">
+    <h2>Ready for the Quiz?</h2>
+    <p>Test your understanding of C# OOP concepts covered in the course.</p>
+    <ul>
+      <li>30 multiple-choice questions</li>
+      <li>1 mark for each correct answer</li>
+      <li>No negative marking</li>
+      <li>Your result appears immediately after submission</li>
+    </ul>
+    <button id="start-btn">Start Quiz</button>
+  </div>
+
+  <main id="quiz-screen" class="hidden">
+    <div class="topbar">
+      <span id="progress">Question 1 of 30</span>
+      <span id="score-live">Score: 0</span>
+    </div>
+    <div class="progress-track"><div id="progress-bar"></div></div>
+    <form id="quiz-form"></form>
+    <div class="actions">
+      <button type="button" id="prev-btn" class="secondary">Previous</button>
+      <button type="button" id="next-btn">Next</button>
+      <button type="button" id="submit-btn" class="submit hidden">Submit Quiz</button>
+    </div>
+  </main>
+
+  <section id="result-screen" class="card hidden">
+    <p class="badge">Result</p>
+    <h2 id="result-title"></h2>
+    <div class="result-score"><span id="final-score"></span>/30</div>
+    <p id="result-message"></p>
+    <div id="answer-review"></div>
+    <button id="retry-btn">Try Again</button>
+  </section>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
