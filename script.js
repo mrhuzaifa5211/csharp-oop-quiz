@@ -31,7 +31,7 @@ const questions=[
 ["Boss Round", "Which statement best describes a class?", ["An instance of an object","A blueprint/template for creating objects","A method parameter","A runtime exception"], 2]
 ];
 
-const answers=[2,3,2,2,2,2,2,3,3,2,2,1,2,2,3,2,3,3,2,1,4,1,1,2,2,2,2,2,1,2];
+const answers=[1,3,2,2,2,2,2,3,3,2,2,1,2,2,3,2,3,3,2,1,4,1,1,2,2,2,2,2,1,2];
 let current=0, selected=Array(questions.length).fill(null);
 
 const form=document.getElementById("quiz-form");
@@ -41,10 +41,24 @@ questions.forEach((q,i)=>{
   section.dataset.index=i;
   section.innerHTML="<h3>Q"+(i+1)+". "+q[1]+"</h3>"+q[2].map((o,j)=>'<label class="option"><input type="radio" name="q'+i+'" value="'+(j+1)+'"> '+String.fromCharCode(65+j)+". "+o+"</label>").join("");
   form.appendChild(section);
-  section.querySelectorAll("input").forEach(input=>input.addEventListener("change",()=>{if(selected[i]!==null)return;selected[i]=Number(input.value);section.querySelectorAll("input").forEach(r=>r.disabled=true);section.classList.add("locked");updateLive()}));
+  section.querySelectorAll("input").forEach(input=>input.addEventListener("change",()=>{
+  if(selected[i]!==null)return;
+  selected[i]=Number(input.value);
+  const chosen=Number(input.value);
+  section.querySelectorAll(".option").forEach((label,j)=>{
+    label.classList.remove("answer-correct","answer-wrong","answer-key");
+    if(j+1===answers[i]) label.classList.add("answer-key");
+    if(j+1===chosen) label.classList.add(chosen===answers[i]?"answer-correct":"answer-wrong");
+  });
+  section.querySelectorAll("input").forEach(r=>r.disabled=true);
+  section.classList.add("locked");
+  updateLive();
+}));
 });
 
 function updateLive(){
+  document.getElementById("score-live").classList.add("score-pulse");
+  setTimeout(()=>document.getElementById("score-live").classList.remove("score-pulse"),350);
   let score=selected.reduce((s,v,i)=>s+(v===answers[i]?1:0),0);
   document.getElementById("score-live").textContent="Score: "+score;
 }
