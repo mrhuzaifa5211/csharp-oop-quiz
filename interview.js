@@ -31,7 +31,7 @@ const text=(q)=>q[lang]||q.en;
 
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{document.querySelectorAll(".mode").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");lang=b.dataset.lang;});
 function speak(s){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang=label().voice;u.rate=.91;speechSynthesis.speak(u)}
-function clean(s){return (s||"").toLowerCase().replace(/[^a-z0-9\\u0900-\\u097f\\s]/gi," ").replace(/\\s+/g," ").trim()}
+function clean(s){return (s||"").toLowerCase().replace(/[^a-z0-9\u0900-\u097f\s]/gi," ").replace(/\s+/g," ").trim()}
 function hit(answer,key){const a=clean(answer), k=clean(key);if(!k)return false;return a.includes(k)}
 function evaluate(q,answer){
   const a=clean(answer);let matched=q.keys.filter(k=>hit(a,k));let required=q.required.filter(k=>hit(a,k));
