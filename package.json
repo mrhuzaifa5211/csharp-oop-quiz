@@ -1,5 +1,8 @@
 {
-  "name":"csharp-oop-ai-interview",
-  "private":true,
-  "version":"1.0.0"
+  "name": "csharp-oop-ai-interview",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": "24.x"
+  }
 }
