@@ -3,61 +3,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C# Voice Interview</title>
+<title>C# AI Mock Interview</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.voice-wrap{max-width:1050px}.voice-card{background:linear-gradient(145deg,#071d3b,#08132b);border:1px solid #1b4d82;border-radius:20px;padding:30px;box-shadow:0 20px 60px #0007;margin-bottom:20px}.interview-hero{text-align:center;padding:35px}.interview-hero h1{font-size:42px;margin:12px 0}.interview-hero h1 span{background:linear-gradient(90deg,#2bd8ff,#b34cff);-webkit-background-clip:text;color:transparent}.lang-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:25px 0}.lang-btn{background:#081f3e;color:#bdd2ed;border:1px solid #23496f}.lang-btn.selected{border-color:#4f7cff;background:linear-gradient(135deg,#123c76,#31205f);box-shadow:0 0 25px #416cff33}.mic{width:92px;height:92px;border-radius:50%;font-size:34px;padding:0;background:linear-gradient(145deg,#187ef5,#873bea);box-shadow:0 0 35px #4c68ff55}.mic.listening{background:#e54862;animation:pulse 1s infinite}.status{font-weight:750;color:#66d9ff;margin:17px 0}.transcript{min-height:125px;border:1px solid #24476d;border-radius:14px;padding:17px;background:#04152d;color:#d7e7f8;line-height:1.7}.interview-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px}.score-big{font-size:64px;font-weight:900;color:#54d5ff}.feedback{padding:15px;border-radius:12px;background:#081f3d;margin:10px 0;color:#c4d7ed}.good{border-left:5px solid #1bc58e}.needs{border-left:5px solid #ff5367}.small{color:#7897bd;font-size:13px}@keyframes pulse{50%{transform:scale(1.08);box-shadow:0 0 55px #ff536788}}@media(max-width:650px){.lang-grid{grid-template-columns:1fr}.voice-card{padding:20px}.interview-hero h1{font-size:32px}}
+body{background:#020b1d}.ai-wrap{max-width:1120px;margin:auto;padding:28px 22px 55px}
+.ai-hero{border:1px solid #2456a0;border-radius:24px;padding:34px;background:linear-gradient(120deg,#061d42,#0b1234);box-shadow:0 25px 70px #0008;position:relative;overflow:hidden}
+.ai-hero:after{content:"";position:absolute;width:320px;height:320px;border-radius:50%;right:-100px;top:-150px;background:#6f42ff25;filter:blur(10px)}
+.ai-badge{display:inline-flex;gap:8px;align-items:center;color:#67ddff;font-size:12px;font-weight:850;letter-spacing:.5px}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:#29dca1;box-shadow:0 0 15px #29dca1}
+.ai-hero h1{font-size:43px;margin:16px 0 10px}.ai-hero h1 span{background:linear-gradient(90deg,#2bd8ff,#ae62ff);-webkit-background-clip:text;color:transparent}
+.ai-hero p{color:#9fb7da;line-height:1.7;max-width:760px}.mode-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.mode{border:1px solid #244b78;background:#071c3a;color:#bcd1ee;border-radius:12px;padding:12px 18px;cursor:pointer;font-weight:750}.mode.selected{border-color:#557dff;background:linear-gradient(120deg,#113c78,#30205d);color:#fff}
+.ai-card{margin-top:18px;border:1px solid #183e6d;border-radius:20px;padding:27px;background:linear-gradient(145deg,#061a35,#071329);box-shadow:0 20px 55px #0005}
+.setup-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.info-box{border:1px solid #1b426e;border-radius:15px;padding:18px;background:#071c37}.info-box h3{margin:0 0 8px}.info-box p,.info-box li{color:#8faacc;font-size:13px;line-height:1.7}.info-box ul{padding-left:19px}
+.interview-head{display:flex;justify-content:space-between;gap:15px;align-items:center}.pill{padding:7px 11px;border-radius:999px;background:#0b2950;color:#78cfff;font-size:11px;font-weight:800}.pill.level{background:#2a174d;color:#d59cff}.meter{height:8px;background:#122b4b;border-radius:99px;overflow:hidden;margin:16px 0 28px}.meter>div{height:100%;width:0;background:linear-gradient(90deg,#22cfff,#8a5dff);transition:.35s}
+.q-meta{display:flex;gap:10px;flex-wrap:wrap;color:#7794b8;font-size:12px}.question-box{margin-top:15px}.question-box h2{font-size:27px;line-height:1.4;margin:12px 0}.followup{padding:10px 13px;border-left:3px solid #7c55ff;background:#0b1630;color:#aebfda;font-size:12px;border-radius:8px;display:none}
+.voice-row{display:flex;align-items:center;justify-content:center;gap:16px;margin:23px 0}.mic2{width:82px;height:82px;border:0;border-radius:50%;background:linear-gradient(145deg,#177ff3,#833ee8);font-size:30px;color:#fff;cursor:pointer;box-shadow:0 0 35px #4868ff55}.mic2.listening{background:#e54862;animation:aiPulse 1s infinite}.listen-btn{border:1px solid #2a4e7b;background:#0a2241;color:#bdd2ec;border-radius:11px;padding:11px 15px;cursor:pointer}.status2{text-align:center;color:#63d8ff;font-weight:750;min-height:22px}.transcript2{min-height:125px;border:1px solid #21466f;border-radius:14px;padding:17px;background:#04142b;color:#dceafa;line-height:1.7;white-space:pre-wrap}.answer-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:15px}.primary2,.secondary2{border:0;border-radius:11px;padding:12px 19px;font-weight:800;cursor:pointer}.primary2{background:linear-gradient(100deg,#168cf3,#705dff);color:#fff}.secondary2{background:#213653;color:#c5d7ee}
+.live-feedback{display:none;margin-top:18px;padding:17px;border-radius:14px}.live-feedback.good{display:block;background:#062c28;border:1px solid #169a79;color:#c8fff1}.live-feedback.partial{display:block;background:#2c2409;border:1px solid #aa8428;color:#fff2bd}.live-feedback.bad{display:block;background:#351526;border:1px solid #a53c5c;color:#ffd8e1}.feedback-title{font-weight:900;font-size:15px}.feedback-body{margin-top:7px;color:#bcd1e9;line-height:1.65;font-size:13px}.correct-answer{margin-top:10px;padding:12px;background:#061a31;border-radius:10px;color:#d8e8fa;font-size:13px}
+.result-hero{text-align:center}.big-score{font-size:74px;font-weight:950;color:#54d5ff;margin:5px}.level-result{display:inline-block;padding:8px 15px;border-radius:99px;background:#241549;color:#d99cff;font-weight:850}.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}.report-stat{padding:16px;border:1px solid #1a416d;border-radius:13px;background:#071c37}.report-stat small{color:#7897bb;display:block}.report-stat strong{font-size:23px;display:block;margin-top:5px}.review2{margin-top:20px}.review-row{border:1px solid #193d67;border-radius:13px;padding:15px;margin:10px 0;background:#071b35}.review-row.good{border-left:4px solid #22d29e}.review-row.partial{border-left:4px solid #e3b83e}.review-row.bad{border-left:4px solid #ff536f}.review-row small{color:#7e9abb}.review-row p{color:#b9cce5;line-height:1.6;margin:7px 0}.hidden{display:none!important}
+@keyframes aiPulse{50%{transform:scale(1.08);box-shadow:0 0 55px #ff536788}}
+@media(max-width:760px){.setup-grid{grid-template-columns:1fr}.ai-hero h1{font-size:34px}.ai-card{padding:20px}.question-box h2{font-size:22px}.report-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-<div class="container voice-wrap">
-<header>
-<p class="badge">C# / .NET</p>
-<h1>🎤 C# Voice Interview</h1>
-<p class="subtitle">Hindi • English • Hinglish</p>
-</header>
-
-<section id="setup" class="voice-card">
-<h2>Start Your Interview</h2>
-<p>Choose the language in which the interviewer should speak and listen.</p>
-<div class="lang-grid">
-<button class="lang-btn selected" data-lang="hi-IN">🇮🇳 Hindi</button>
-<button class="lang-btn" data-lang="en-IN">🇬🇧 English</button>
-<button class="lang-btn" data-lang="hi-IN">🔄 Hinglish</button>
-</div>
-<p class="small">Best experience: Chrome/Edge on desktop with microphone permission enabled.</p>
-<button id="start-interview">Start Voice Interview</button>
+<div class="ai-wrap">
+<section class="ai-hero">
+  <div class="ai-badge"><span class="ai-dot"></span> ADAPTIVE C# / .NET INTERVIEW</div>
+  <h1>AI-Style <span>Mock Interview</span></h1>
+  <p>This is not a fixed quiz. The interviewer adapts the next question to the student's performance, checks whether an answer is complete, and explains what is missing before moving on.</p>
+  <div class="mode-row">
+    <button class="mode selected" data-lang="hi-IN">🇮🇳 Hindi</button>
+    <button class="mode" data-lang="en-IN">🇬🇧 English</button>
+    <button class="mode" data-lang="hinglish">🔄 Hinglish</button>
+  </div>
 </section>
 
-<section id="interview" class="voice-card hidden">
-<div class="topbar"><span id="q-progress">Question 1 of 10</span><span id="q-score">Score: 0</span></div>
-<div class="progress-track"><div id="q-bar"></div></div>
-<h2 id="question"></h2>
-<p id="category" class="small"></p>
-<div class="interview-actions">
-<button id="speak-btn" class="secondary">🔊 Hear Question</button>
-<button id="mic-btn" class="mic" title="Start speaking">🎙️</button>
-</div>
-<p id="status" class="status">Press the microphone and answer.</p>
-<div id="transcript" class="transcript">Your spoken answer will appear here...</div>
-<div class="interview-actions">
-<button id="retry-speech" class="secondary">Try Again</button>
-<button id="next-question">Next Question</button>
-</div>
+<section id="setup" class="ai-card">
+  <div class="setup-grid">
+    <div>
+      <h2>Start the Interview</h2>
+      <p style="color:#8faacc;line-height:1.7">Every student starts with a short diagnostic. Strong answers unlock harder questions; weak answers trigger simpler follow-ups and explanations.</p>
+      <button id="start" class="primary2">🎙 Start Mock Interview</button>
+    </div>
+    <div class="info-box">
+      <h3>What will be evaluated?</h3>
+      <ul>
+        <li>Concept knowledge</li>
+        <li>Answer completeness</li>
+        <li>Technical accuracy</li>
+        <li>Progressive difficulty</li>
+        <li>Weak areas and improvement tips</li>
+      </ul>
+    </div>
+  </div>
 </section>
 
-<section id="result" class="voice-card hidden">
-<p class="badge">Interview Result</p>
-<h2>Interview Completed</h2>
-<div class="score-big"><span id="final-score">0</span>/10</div>
-<p id="final-message"></p>
-<div id="interview-review"></div>
-<div class="interview-actions">
-<button onclick="location.reload()">Take Interview Again</button>
-<a href="index.html"><button type="button" class="secondary">Back to Quiz</button></a>
-</div>
+<section id="interview" class="ai-card hidden">
+  <div class="interview-head">
+    <div><span id="qno" class="pill">Question 1</span> <span id="category" class="pill">C# Basics</span></div>
+    <span id="level" class="pill level">Level: Beginner</span>
+  </div>
+  <div class="meter"><div id="meter"></div></div>
+  <div class="q-meta"><span id="difficulty">Diagnostic</span><span>•</span><span id="topic">C#</span></div>
+  <div class="question-box">
+    <h2 id="question">Question</h2>
+    <div id="followup" class="followup"></div>
+  </div>
+  <div class="voice-row">
+    <button id="hear" class="listen-btn">🔊 Hear Question</button>
+    <button id="mic" class="mic2">🎙️</button>
+  </div>
+  <div id="status" class="status2">Press the microphone and answer in your own words.</div>
+  <div id="transcript" class="transcript2">Your spoken answer will appear here...</div>
+  <div class="answer-actions">
+    <button id="retry" class="secondary2">Try Again</button>
+    <button id="submit" class="primary2">Submit Answer</button>
+  </div>
+  <div id="feedback" class="live-feedback"></div>
+</section>
+
+<section id="result" class="ai-card hidden">
+  <div class="result-hero">
+    <div class="ai-badge">INTERVIEW REPORT</div>
+    <div class="big-score"><span id="score">0</span><small style="font-size:25px;color:#7896b8">/100</small></div>
+    <div id="result-level" class="level-result">Beginner</div>
+    <p id="result-msg" style="color:#9fb7d8;line-height:1.7"></p>
+  </div>
+  <div class="report-grid">
+    <div class="report-stat"><small>Accuracy</small><strong id="accuracy">0%</strong></div>
+    <div class="report-stat"><small>Complete Answers</small><strong id="complete">0%</strong></div>
+    <div class="report-stat"><small>Final Level</small><strong id="final-level">Beginner</strong></div>
+  </div>
+  <div class="review2">
+    <h3>Question-by-question feedback</h3>
+    <div id="review"></div>
+  </div>
+  <div class="answer-actions">
+    <button onclick="location.reload()" class="primary2">Take Interview Again</button>
+    <a href="index.html"><button class="secondary2" type="button">Back to Dashboard</button></a>
+  </div>
 </section>
 </div>
-<script src="interview.js?v=1"></script>
+<script src="interview.js?v=2"></script>
 </body>
 </html>
