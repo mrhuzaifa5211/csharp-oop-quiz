@@ -3,52 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C# OOP College-Style MCQ Exam</title>
+<title>C# OOP Quiz & Voice Interview</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <header>
-    <p class="badge">C# / .NET</p>
-    <h1>C# OOP College-Style MCQ Exam</h1>
-    <p class="subtitle">30 Questions • 30 Marks • 1 mark each • No negative marking</p><p style="margin-top:16px"><a href="interview.html"><button type="button">🎤 Start Voice Interview</button></a></p>
-  </header>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-icon">C#</div><div><b>C# OOP Quiz</b><span>Learn • Practice • Grow</span></div></div>
+    <nav>
+      <a class="nav-item active" href="index.html">⌂ <span>Home</span></a>
+      <a class="nav-item" href="#start-screen">▣ <span>MCQ Quiz</span></a>
+      <a class="nav-item" href="interview.html">🎙 <span>Voice Interview</span><em>NEW</em></a>
+    </nav>
+    <div class="sidebar-note"><strong>🚀 Keep Learning</strong><span>Keep Growing</span><small>Your future self will thank you.</small></div>
+  </aside>
 
-  <div id="start-screen" class="card">
-    <h2>Ready for the Quiz?</h2>
-    <p>Test your understanding of C# OOP concepts covered in the course.</p>
-    <ul>
-      <li>30 multiple-choice questions</li>
-      <li>1 mark for each correct answer</li>
-      <li>No negative marking</li>
-      <li>Your result appears immediately after submission</li>
-    </ul>
-    <button id="start-btn">Start Quiz</button>
+  <div class="page">
+    <header class="top-header">
+      <div class="mobile-brand">C# OOP Quiz</div>
+      <div class="top-actions"><span>☼</span><span>♧</span><div class="profile"><span class="avatar">H</span><div><b>Huzaifa</b><small>Student</small></div>⌄</div></div>
+    </header>
+
+    <main class="dashboard">
+      <section id="start-screen" class="dashboard-home">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">C# / .NET &nbsp;•&nbsp; OOP &nbsp;•&nbsp; Interview Practice</p>
+            <h1>Build Your Skills,<br><span>Ace Your Interview!</span></h1>
+            <p>Practice C# OOP concepts with MCQs or take a voice interview and improve your technical confidence.</p>
+            <div class="hero-stats"><span>◉ 30 MCQs</span><span>♬ Voice Interview</span><span>▥ Detailed Review</span><span>↗ Improve & Grow</span></div>
+          </div>
+          <div class="hero-visual"><div class="bot-circle">C#<small>AI</small></div><div class="speech s1">Let's Talk!</div><div class="speech s2">नमस्ते!</div><div class="code-window"><span>public class Student</span><br>{<br>&nbsp; public void Learn()<br>&nbsp; {<br>&nbsp;&nbsp;&nbsp; // Keep Going 🚀<br>&nbsp; }<br>}</div></div>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card quiz-card">
+            <div class="feature-icon">▣</div><div class="new-label">MCQ</div>
+            <h2>Test Your Knowledge</h2>
+            <p>30 carefully designed questions covering C# and OOP concepts.</p>
+            <div class="feature-points"><span>◉ 30 Questions</span><span>★ Instant Results</span><span>▥ Detailed Review</span></div>
+            <button id="start-btn" class="gradient-btn">Start Quiz <b>→</b></button>
+          </article>
+          <article class="feature-card voice-card">
+            <div class="feature-icon purple">♬</div><div class="new-label purple-label">NEW</div>
+            <h2>AI Voice Interview</h2>
+            <p>Answer interview questions using your voice in Hindi, English or Hinglish.</p>
+            <div class="feature-points"><span>◉ Hindi / English</span><span>♬ Speech to Text</span><span>▥ Interview Report</span></div>
+            <a href="interview.html"><button class="gradient-btn purple-btn">Start Interview <b>→</b></button></a>
+          </article>
+        </div>
+
+        <section class="progress-panel">
+          <div><h2>Your Progress</h2><p>Keep practicing to become interview-ready.</p></div>
+          <div class="progress-cards"><div><span>🎓</span><small>Total Attempts</small><strong>0</strong></div><div><span>✓</span><small>Best Score</small><strong>0/30</strong></div><div><span>♬</span><small>Interviews Given</small><strong>0</strong></div><div><span>★</span><small>Average Score</small><strong>0%</strong></div></div>
+        </section>
+      </section>
+
+      <main id="quiz-screen" class="quiz-panel hidden">
+        <div class="topbar"><span id="progress">Question 1 of 30</span><span id="score-live">Score: 0</span></div>
+        <div class="progress-track"><div id="progress-bar"></div></div>
+        <form id="quiz-form"></form>
+        <div class="actions"><button type="button" id="prev-btn" class="secondary">← Previous</button><button type="button" id="next-btn">Next →</button><button type="button" id="submit-btn" class="submit hidden">Submit Quiz</button></div>
+      </main>
+
+      <section id="result-screen" class="result-panel hidden">
+        <p class="eyebrow">Interview Practice Result</p><h2 id="result-title"></h2><div class="result-score"><span id="final-score"></span><small>/30</small></div><p id="result-message"></p><div id="answer-review"></div><button id="retry-btn" class="gradient-btn">Try Again</button>
+      </section>
+    </main>
   </div>
-
-  <main id="quiz-screen" class="hidden">
-    <div class="topbar">
-      <span id="progress">Question 1 of 30</span>
-      <span id="score-live">Score: 0</span>
-    </div>
-    <div class="progress-track"><div id="progress-bar"></div></div>
-    <form id="quiz-form"></form>
-    <div class="actions">
-      <button type="button" id="prev-btn" class="secondary">Previous</button>
-      <button type="button" id="next-btn">Next</button>
-      <button type="button" id="submit-btn" class="submit hidden">Submit Quiz</button>
-    </div>
-  </main>
-
-  <section id="result-screen" class="card hidden">
-    <p class="badge">Result</p>
-    <h2 id="result-title"></h2>
-    <div class="result-score"><span id="final-score"></span>/30</div>
-    <p id="result-message"></p>
-    <div id="answer-review"></div>
-    <button id="retry-btn">Try Again</button>
-  </section>
 </div>
-<script src="script.js?v=2"></script>
+<script src="script.js?v=3"></script>
 </body>
 </html>
