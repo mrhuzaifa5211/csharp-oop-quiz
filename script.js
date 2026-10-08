@@ -31,7 +31,7 @@ const questions=[
 ["Boss Round", "Which statement best describes a class?", ["An instance of an object","A blueprint/template for creating objects","A method parameter","A runtime exception"], 2]
 ];
 
-const answers=[3,1,3,2,2,2,2,3,3,2,2,1,2,2,3,2,3,3,2,1,4,1,1,2,2,2,2,2,1,2];
+const answers=[2,3,2,2,2,2,2,3,3,2,2,1,2,2,3,2,3,3,2,1,4,1,1,2,2,2,2,2,1,2];
 let current=0, selected=Array(questions.length).fill(null);
 
 const form=document.getElementById("quiz-form");
