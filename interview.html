@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C# Voice Interview</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.voice-wrap{max-width:900px;margin:0 auto}.voice-card{background:#fff;border-radius:18px;padding:28px;box-shadow:0 8px 30px rgba(20,35,70,.08);margin-bottom:18px}.lang-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.lang-btn{background:#f4f7fb;color:#172033;border:2px solid #dce1ea}.lang-btn.selected{border-color:#3157d5;background:#e8eefc}.mic{width:88px;height:88px;border-radius:50%;font-size:32px;padding:0}.mic.listening{background:#d23b3b;animation:pulse 1s infinite}.status{font-weight:700;margin:15px 0}.transcript{min-height:120px;border:1px solid #dce1ea;border-radius:12px;padding:15px;background:#f8fafc;line-height:1.6}.interview-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}.score-big{font-size:54px;font-weight:800;color:#3157d5}.feedback{padding:14px;border-radius:12px;background:#f5f7fa;margin:10px 0}.good{border-left:5px solid #168653}.needs{border-left:5px solid #d23b3b}.small{color:#657085;font-size:14px}@keyframes pulse{50%{transform:scale(1.08)}}@media(max-width:650px){.lang-grid{grid-template-columns:1fr}.voice-card{padding:20px}}
+</style>
+</head>
+<body>
+<div class="container voice-wrap">
+<header>
+<p class="badge">C# / .NET</p>
+<h1>🎤 C# Voice Interview</h1>
+<p class="subtitle">Hindi • English • Hinglish</p>
+</header>
+
+<section id="setup" class="voice-card">
+<h2>Start Your Interview</h2>
+<p>Choose the language in which the interviewer should speak and listen.</p>
+<div class="lang-grid">
+<button class="lang-btn selected" data-lang="hi-IN">🇮🇳 Hindi</button>
+<button class="lang-btn" data-lang="en-IN">🇬🇧 English</button>
+<button class="lang-btn" data-lang="hi-IN">🔄 Hinglish</button>
+</div>
+<p class="small">Best experience: Chrome/Edge on desktop with microphone permission enabled.</p>
+<button id="start-interview">Start Voice Interview</button>
+</section>
+
+<section id="interview" class="voice-card hidden">
+<div class="topbar"><span id="q-progress">Question 1 of 10</span><span id="q-score">Score: 0</span></div>
+<div class="progress-track"><div id="q-bar"></div></div>
+<h2 id="question"></h2>
+<p id="category" class="small"></p>
+<div class="interview-actions">
+<button id="speak-btn" class="secondary">🔊 Hear Question</button>
+<button id="mic-btn" class="mic" title="Start speaking">🎙️</button>
+</div>
+<p id="status" class="status">Press the microphone and answer.</p>
+<div id="transcript" class="transcript">Your spoken answer will appear here...</div>
+<div class="interview-actions">
+<button id="retry-speech" class="secondary">Try Again</button>
+<button id="next-question">Next Question</button>
+</div>
+</section>
+
+<section id="result" class="voice-card hidden">
+<p class="badge">Interview Result</p>
+<h2>Interview Completed</h2>
+<div class="score-big"><span id="final-score">0</span>/10</div>
+<p id="final-message"></p>
+<div id="interview-review"></div>
+<div class="interview-actions">
+<button onclick="location.reload()">Take Interview Again</button>
+<a href="index.html"><button type="button" class="secondary">Back to Quiz</button></a>
+</div>
+</section>
+</div>
+<script src="interview.js?v=1"></script>
+</body>
+</html>
