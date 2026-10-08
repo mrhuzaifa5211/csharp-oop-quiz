@@ -1,113 +1,80 @@
-const banks={
-  "hi-IN":[
-    ["C# Basics","C# mein object banane ke liye kaunsa keyword use hota hai?",["new","object","class"],["new","न्यू"]],
-    ["Class & Object","Class aur object mein kya difference hai?",["blueprint","template","instance","class"],["blueprint","template","instance","class"]],
-    ["Constructor","Constructor kya hota hai?",["special member","object create","same name","return type"],["special member","object","create","class name","no return"]],
-    ["Constructor","Constructor ko overload kar sakte hain?",["multiple constructors","different parameters","overloading"],["multiple","different parameter","overload"]],
-    ["this keyword","this keyword ka use kis liye hota hai?",["current object","current instance","class object"],["current object","current instance"]],
-    ["Inheritance","Inheritance kya hota hai?",["derived class","base class","reuse","inherit"],["derived","base","reuse","inherit"]],
-    ["Polymorphism","Polymorphism ka simple meaning kya hai?",["many forms","different implementation","same interface"],["many forms","different implementation","different forms"]],
-    ["Abstract Class","Abstract class ko directly instantiate kar sakte hain?",["no","cannot instantiate","direct object"],["no","cannot","instantiate"]],
-    ["Interface","Interface kya define karta hai?",["contract","rules","members"],["contract","rules","members"]],
-    ["Static","Static member kis se belong karta hai?",["class","type","object nahi"],["class","type","not object","object nahi"]]
-  ],
-  "en-IN":[
-    ["C# Basics","Which keyword is used to create an object in C#?",["new","object","class"],["new"]],
-    ["Class & Object","What is the difference between a class and an object?",["blueprint","template","instance","class"],["blueprint","template","instance","class"]],
-    ["Constructor","What is a constructor?",["special member","object created","same name","no return type"],["special member","object","created","class name","no return"]],
-    ["Constructor","Can a constructor be overloaded?",["multiple constructors","different parameters","overloading"],["multiple","different parameter","overload"]],
-    ["this keyword","Why do we use the this keyword?",["current object","current instance"],["current object","current instance"]],
-    ["Inheritance","What is inheritance in C#?",["derived class","base class","reuse","inherit"],["derived","base","reuse","inherit"]],
-    ["Polymorphism","What does polymorphism mean?",["many forms","different implementation","same interface"],["many forms","different implementation","different forms"]],
-    ["Abstract Class","Can an abstract class be instantiated directly?",["no","cannot instantiate","direct object"],["no","cannot","instantiate"]],
-    ["Interface","What is an interface?",["contract","rules","members"],["contract","rules","members"]],
-    ["Static","What does a static member belong to?",["class","type","not object"],["class","type","not object"]]
-  ]
+const LANGS={
+  "hi-IN":{voice:"hi-IN",start:"नमस्ते। आपका C# mock interview शुरू करते हैं। पहले मैं आपका level समझूंगा।",listen:"Mic दबाकर अपने शब्दों में answer दीजिए।",thinking:"आपका answer evaluate कर रहा हूँ...",again:"Answer दोबारा बोलिए।",done:"Interview पूरा हो गया। नीचे आपका detailed report है।"},
+  "en-IN":{voice:"en-IN",start:"Hello. Let's start your C sharp mock interview. I will first understand your level.",listen:"Press the microphone and answer in your own words.",thinking:"Evaluating your answer...",again:"Please answer again.",done:"The interview is complete. Here is your detailed report."},
+  "hinglish":{voice:"hi-IN",start:"Hello! Chalo C sharp ka proper mock interview start karte hain. Pehle main tumhara level samjhunga.",listen:"Mic dabao aur apne words mein answer do.",thinking:"Tumhara answer evaluate kar raha hoon...",again:"Answer ek baar phir do.",done:"Interview complete ho gaya. Yeh raha tumhara detailed report."}
 };
-const speechMap={
-  "hi-IN":{greet:"नमस्ते। आपका C# voice interview शुरू करते हैं।",done:"बहुत बढ़िया। आपका interview पूरा हो गया है।"},
-  "en-IN":{greet:"Hello. Let's start your C sharp voice interview.",done:"Great. Your interview is complete."}
-};
-let selectedLang="hi-IN", questions=banks[selectedLang], current=0, score=0, answers=[], recognition=null, listening=false;
 
+const BANK=[
+{id:"class-object",topic:"Class & Object",level:1,q:{hi:"Class aur object mein kya difference hai?",en:"What is the difference between a class and an object?",hinglish:"Class aur object mein actual difference kya hota hai?"},keys:["class","blueprint","template","object","instance"],required:["class","object"],answer:{hi:"A class is a blueprint or template, while an object is an instance of that class created at runtime.",en:"A class is a blueprint or template, while an object is an instance of that class created at runtime.",hinglish:"Class blueprint/template hoti hai, aur object us class ka instance hota hai."},hint:{hi:"Ek ko blueprint aur doosre ko us blueprint se bani real entity samjho.",en:"Think of one as the blueprint and the other as the real instance created from it.",hinglish:"Ek blueprint hai aur doosra us blueprint se bani real entity."},follow:["constructor"]},
+{id:"constructor",topic:"Constructor",level:1,q:{hi:"Constructor kya hota hai?",en:"What is a constructor?",hinglish:"Constructor kya hota hai aur kab call hota hai?"},keys:["constructor","special member","object","initialize","initialise","no return"],required:["special member","object"],answer:{hi:"A constructor is a special member of a class used to initialize an object when it is created. It has the same name as the class and no return type.",en:"A constructor is a special member used to initialize an object when it is created. It has the same name as the class and no return type.",hinglish:"Constructor class ka special member hota hai jo object create hone par initialization ke liye automatically call hota hai."},hint:{hi:"Object creation ke time kya automatically execute hota hai, yaad karo.",en:"Think about what runs automatically when an object is created.",hinglish:"Object banate time jo automatically run hota hai usko yaad karo."},follow:["constructor-overload"]},
+{id:"method-overload",topic:"Method Overloading",level:1,q:{hi:"Method overloading kya hai?",en:"What is method overloading?",hinglish:"Method overloading ka matlab kya hai?"},keys:["same method","same name","different parameter","different parameters","compile time","overload"],required:["same name","different parameter"],answer:{hi:"Method overloading means defining multiple methods with the same name but different parameter lists in the same class.",en:"Method overloading means defining multiple methods with the same name but different parameter lists in the same class.",hinglish:"Same method name ke multiple methods banana, but parameter list different rakhna, method overloading hai."},hint:{hi:"Method ka naam same rakho, parameters mein kya change hota hai?",en:"The method name stays the same; think about what changes in the parameter list.",hinglish:"Name same hota hai, parameter list mein kya difference hota hai socho."},follow:["constructor-overload"]},
+{id:"constructor-overload",topic:"Constructor Overloading",level:1,q:{hi:"Constructor ko overload kaise karte hain?",en:"How do you overload a constructor?",hinglish:"Constructor overloading kaise karoge?"},keys:["multiple constructor","different parameter","parameter list","same class","overload"],required:["multiple","different parameter"],answer:{hi:"Create multiple constructors in the same class with different parameter lists.",en:"Create multiple constructors in the same class with different parameter lists.",hinglish:"Same class mein multiple constructors banao aur unki parameter lists different rakho."},hint:{hi:"Overloading ka same rule constructor par apply karo.",en:"Apply the same overloading rule to constructors.",hinglish:"Overloading ka basic rule constructor par apply karo."},follow:["this-keyword"]},
+{id:"this-keyword",topic:"this Keyword",level:1,q:{hi:"C# mein this keyword kis liye use hota hai?",en:"Why do we use the this keyword in C#?",hinglish:"this keyword ka use kis liye hota hai?"},keys:["current object","current instance","instance", "this"],required:["current object"],answer:{hi:"The this keyword refers to the current object or current instance of the class.",en:"The this keyword refers to the current object or current instance of the class.",hinglish:"this current object ya current instance ko refer karta hai."},hint:{hi:"Socho method ke andar current object ko kaise refer karoge.",en:"Think about how a class refers to its current instance.",hinglish:"Class ke andar current object ko refer karne wala keyword yaad karo."},follow:["inheritance"]},
+{id:"inheritance",topic:"Inheritance",level:2,q:{hi:"Inheritance kya hai?",en:"What is inheritance in C#?",hinglish:"Inheritance kya hota hai aur iska benefit kya hai?"},keys:["base class","derived class","inherit","reuse","members","parent","child"],required:["base class","derived class"],answer:{hi:"Inheritance allows a derived class to acquire accessible members of a base class, helping reuse common behavior.",en:"Inheritance allows a derived class to acquire accessible members of a base class, helping reuse common behavior.",hinglish:"Inheritance mein derived class base class ke accessible members ko use karti hai aur code reuse hota hai."},hint:{hi:"Parent/base class aur child/derived class ka relation socho.",en:"Think about the relationship between a base class and a derived class.",hinglish:"Base class aur derived class ka relationship yaad karo."},follow:["override"]},
+{id:"polymorphism",topic:"Polymorphism",level:2,q:{hi:"Polymorphism ka simple meaning kya hai?",en:"What does polymorphism mean in OOP?",hinglish:"Polymorphism ka simple meaning kya hai?"},keys:["many forms","different behavior","different implementation","same interface","override","overloading"],required:["many forms"],answer:{hi:"Polymorphism means one interface or base type can represent different implementations or forms of behavior.",en:"Polymorphism means one interface or base type can represent different implementations or forms of behavior.",hinglish:"Polymorphism ka meaning many forms hai, jahan same interface/base type different implementations ko represent kar sakta hai."},hint:{hi:"Word ko break karo: poly + morph. Behavior ke multiple forms socho.",en:"Break down the word and think about multiple forms of behavior.",hinglish:"Poly ka relation many aur morph ka relation form se socho."},follow:["override"]},
+{id:"override",topic:"Method Overriding",level:2,q:{hi:"Base class ke virtual method ko derived class mein change karna ho to kya use karoge?",en:"What keyword is used to override a virtual method in a derived class?",hinglish:"Virtual method ko derived class mein override karne ke liye kya use karoge?"},keys:["override","virtual","derived"],required:["override"],answer:{hi:"The override keyword is used in the derived class to provide a new implementation of a virtual or abstract member.",en:"The override keyword is used in the derived class to provide a new implementation of a virtual or abstract member.",hinglish:"Derived class mein virtual ya abstract member ki implementation dene ke liye override keyword use hota hai."},hint:{hi:"virtual ke opposite pair mein derived class wala keyword yaad karo.",en:"Think of the keyword paired with virtual members in a derived class.",hinglish:"virtual member ko derived class mein implement karne wala keyword yaad karo."},follow:["abstract"]},
+{id:"abstract",topic:"Abstract Class",level:2,q:{hi:"Abstract class kya hai aur ise directly instantiate kar sakte hain?",en:"What is an abstract class, and can it be instantiated directly?",hinglish:"Abstract class kya hoti hai aur kya iska direct object bana sakte hain?"},keys:["abstract","cannot instantiate","base class","abstract method","non abstract"],required:["abstract","cannot instantiate"],answer:{hi:"An abstract class cannot be instantiated directly. It is mainly used as a base class and can contain abstract and non-abstract members.",en:"An abstract class cannot be instantiated directly. It is mainly used as a base class and can contain abstract and non-abstract members.",hinglish:"Abstract class ka direct object nahi bana sakte; ye mainly base class ke roop mein use hoti hai aur abstract/non-abstract members rakh sakti hai."},hint:{hi:"Pehle direct object creation ke rule ko identify karo.",en:"First recall the rule about direct object creation.",hinglish:"Sabse pehle direct object banane ka rule yaad karo."},follow:["interface"]},
+{id:"sealed",topic:"Sealed Class",level:2,q:{hi:"Sealed class ka purpose kya hai?",en:"What is the purpose of a sealed class?",hinglish:"Sealed class ka purpose kya hota hai?"},keys:["sealed","inherit","cannot inherit","prevent inheritance","derived"],required:["sealed","cannot inherit"],answer:{hi:"A sealed class cannot be inherited by another class. It can still inherit from another class.",en:"A sealed class cannot be inherited by another class. It can still inherit from another class.",hinglish:"Sealed class ko koi aur class inherit nahi kar sakti, lekin sealed class khud kisi class se inherit kar sakti hai."},hint:{hi:"Is keyword ka focus inheritance ko rokna hai.",en:"The keyword is specifically about restricting inheritance.",hinglish:"Keyword ka main purpose inheritance ko restrict karna hai."},follow:["interface"]},
+{id:"static",topic:"Static Members",level:2,q:{hi:"Static member kis se belong karta hai?",en:"What does a static member belong to?",hinglish:"Static member object se belong karta hai ya class se?"},keys:["class","type","not object","object nahi","shared"],required:["class"],answer:{hi:"A static member belongs to the type or class rather than a particular object, so it is accessed through the class name.",en:"A static member belongs to the type or class rather than a particular object, so it is accessed through the class name.",hinglish:"Static member class/type se belong karta hai, kisi particular object se nahi, aur class name se access hota hai."},hint:{hi:"Static ko object-specific nahi, type-level member samjho.",en:"Think of static as type-level rather than object-specific.",hinglish:"Static ko object-level ke bajay type-level member samjho."},follow:["static-constructor"]},
+{id:"static-constructor",topic:"Static Constructor",level:3,q:{hi:"Static constructor kab execute hota hai?",en:"When does a static constructor execute?",hinglish:"Static constructor kab automatically execute hota hai?"},keys:["first use","type initialized","once","before first instance","static data"],required:["first use","once"],answer:{hi:"A static constructor runs automatically once per type, before the type is first used or a static member is accessed, depending on the trigger.",en:"A static constructor runs automatically once per type, before the type is first used or a static member is accessed, depending on the trigger.",hinglish:"Static constructor automatically type ki initialization ke time once run hota hai, first relevant use se pehle."},hint:{hi:"Instance constructor object creation par aata hai; static constructor type initialization se related hai.",en:"Contrast it with an instance constructor: this one is tied to type initialization.",hinglish:"Instance constructor object se related hai; static constructor type initialization se related hai."},follow:["interface"]},
+{id:"interface",topic:"Interface",level:2,q:{hi:"Interface kya define karta hai?",en:"What does an interface define?",hinglish:"Interface kya define karta hai?"},keys:["contract","members","implementation","class must","rules"],required:["contract"],answer:{hi:"An interface defines a contract of members that an implementing type agrees to provide.",en:"An interface defines a contract of members that an implementing type agrees to provide.",hinglish:"Interface ek contract define karta hai jise implementing class ko fulfill karna hota hai."},hint:{hi:"Interface ko contract ki tarah socho.",en:"Think of an interface as a contract between the type and its implementation.",hinglish:"Interface ko contract samjho."},follow:["explicit"]},
+{id:"explicit",topic:"Explicit Interface Implementation",level:3,q:{hi:"Explicit interface implementation kab useful hoti hai?",en:"When is explicit interface implementation useful?",hinglish:"Explicit interface implementation kab use karte hain?"},keys:["same method","two interfaces","separate implementation","interface reference","explicit"],required:["two interfaces","separate implementation"],answer:{hi:"It is useful when a class implements interfaces that contain the same member and needs separate implementations, accessed through the interface reference.",en:"It is useful when a class implements interfaces that contain the same member and needs separate implementations, accessed through the interface reference.",hinglish:"Jab multiple interfaces mein same member ho aur class ko separate implementations deni ho, tab explicit implementation useful hoti hai."},hint:{hi:"Do interfaces mein same method name ho to separate behavior kaise doge, socho.",en:"Think about two interfaces exposing the same member name but requiring different behavior.",hinglish:"Do interfaces mein same method ho aur behavior alag chahiye, us case ko socho."},follow:["scenario"]},
+{id:"var-dynamic",topic:"var vs dynamic",level:3,q:{hi:"var aur dynamic mein main difference kya hai?",en:"What is the main difference between var and dynamic?",hinglish:"var aur dynamic mein main difference kya hai?"},keys:["compile time","runtime","type inferred","dynamic","type checking"],required:["compile time","runtime"],answer:{hi:"var is statically typed with its type inferred at compile time, while dynamic defers member/type checking to runtime.",en:"var is statically typed with its type inferred at compile time, while dynamic defers member/type checking to runtime.",hinglish:"var ka type compile time par infer hota hai, jabki dynamic ki checking runtime par defer hoti hai."},hint:{hi:"Ek compile time aur ek runtime se connected hai.",en:"One is tied to compile time and the other to runtime.",hinglish:"Ek compile time aur doosra runtime se related hai."},follow:["scenario"]},
+{id:"conversion",topic:"Type Conversion",level:3,q:{hi:"Implicit aur explicit conversion mein difference kya hai?",en:"What is the difference between implicit and explicit conversion?",hinglish:"Implicit aur explicit conversion mein kya difference hai?"},keys:["implicit","automatic","explicit","cast","data loss","smaller","larger"],required:["implicit","explicit"],answer:{hi:"Implicit conversion is performed automatically when safe, while explicit conversion requires a cast and may involve possible data loss.",en:"Implicit conversion is performed automatically when safe, while explicit conversion requires a cast and may involve possible data loss.",hinglish:"Implicit conversion safe cases mein automatically hota hai; explicit conversion mein cast karna padta hai aur data loss possible ho sakta hai."},hint:{hi:"Safe automatic conversion aur cast wali conversion compare karo.",en:"Compare automatic safe conversion with conversion that requires a cast.",hinglish:"Automatic safe conversion ko cast wali conversion se compare karo."},follow:["scenario"]},
+{id:"scenario",topic:"OOP Scenario",level:3,q:{hi:"Aapko aisi system design karni hai jahan different payment methods ka Pay() behavior alag ho. Aap interface ya abstract class mein se kya choose karoge aur kyun?",en:"You are designing a system where different payment methods have different Pay() behavior. Would you choose an interface or an abstract class, and why?",hinglish:"Different payment methods ka Pay() behavior alag hai. Interface ya abstract class mein se kya choose karoge aur kyun?"},keys:["interface","contract","multiple","abstract","shared","implementation","common"],required:["interface"],answer:{hi:"An interface is a strong choice when the goal is a common contract that different payment types implement. An abstract class can be preferable when shared state or common implementation is also needed.",en:"An interface is a strong choice when the goal is a common contract that different payment types implement. An abstract class can be preferable when shared state or common implementation is also needed.",hinglish:"Agar main requirement common Pay contract hai to interface strong choice hai; shared state ya common implementation chahiye ho to abstract class useful ho sakti hai."},hint:{hi:"Sirf contract chahiye ya shared state/implementation bhi? Is distinction par decision lo.",en:"Decide whether you need only a contract or also shared state/common implementation.",hinglish:"Socho sirf contract chahiye ya shared state/implementation bhi chahiye."},follow:[]}
+];
+
+let lang="hi-IN", current=null, history=[], used=new Set(), score=0, difficulty=1, submitted=false, recognition=null, listening=false, diagnostic=0;
 const $=id=>document.getElementById(id);
-document.querySelectorAll(".lang-btn").forEach(btn=>btn.onclick=()=>{
-  document.querySelectorAll(".lang-btn").forEach(b=>b.classList.remove("selected"));
-  btn.classList.add("selected");
-  selectedLang=btn.dataset.lang;
-  questions=banks[selectedLang];
-});
-function speak(text){
-  if(!("speechSynthesis" in window)) return;
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang=selectedLang;
-  u.rate=0.92;
-  speechSynthesis.speak(u);
+const label=()=>LANGS[lang];
+const text=(q)=>q[lang]||q.en;
+
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{document.querySelectorAll(".mode").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");lang=b.dataset.lang;});
+function speak(s){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(s);u.lang=label().voice;u.rate=.91;speechSynthesis.speak(u)}
+function clean(s){return (s||"").toLowerCase().replace(/[^a-z0-9\\u0900-\\u097f\\s]/gi," ").replace(/\\s+/g," ").trim()}
+function hit(answer,key){const a=clean(answer), k=clean(key);if(!k)return false;return a.includes(k)}
+function evaluate(q,answer){
+  const a=clean(answer);let matched=q.keys.filter(k=>hit(a,k));let required=q.required.filter(k=>hit(a,k));
+  let coverage=q.required.length?required.length/q.required.length:matched.length/q.keys.length;
+  let status=coverage>=.99?"good":coverage>=.5?"partial":"bad";
+  if(q.id==="polymorphism"&&hit(a,"many forms"))status="good";
+  if(q.id==="sealed"&&hit(a,"sealed")&&hit(a,"inherit"))status="good";
+  const technical=Math.min(1,(matched.length/Math.max(2,Math.ceil(q.keys.length*.5))));
+  const points=status==="good"?10:status==="partial"?6:2;
+  return {status,matched,required,coverage,points,technical};
 }
-function normalize(s){return s.toLowerCase().replace(/[^a-z0-9\u0900-\u097f\s]/gi," ");}
-function evaluate(answer, expected){
-  const a=normalize(answer);
-  let hits=0;
-  expected.forEach(k=>{if(a.includes(normalize(k))) hits++;});
-  return hits>=Math.max(1,Math.ceil(expected.length*0.34));
+function missing(q,result){return q.required.filter(k=>!result.required.includes(k)).slice(0,3)}
+function feedback(q,result){
+  const l=label();const miss=missing(q,result);
+  if(result.status==="good")return {title:lang==="en-IN"?"Strong answer ✓":lang==="hinglish"?"Strong answer ✓":"Achha answer ✓",body:lang==="en-IN"?"Your answer covered the key idea. Let's increase the difficulty.":lang==="hinglish"?"Tumne main concept cover kar diya. Ab difficulty increase karte hain.":"Tumne main concept cover kar diya. Ab difficulty badhate hain."};
+  if(result.status==="partial")return {title:lang==="en-IN"?"Partially correct — add one more point":lang==="hinglish"?"Partially correct — ek important point missing hai":"Partially correct — ek important point missing hai",body:lang==="en-IN"?"You have the basic idea, but the answer is incomplete. The missing point is: "+miss.join(", "):lang==="hinglish"?"Basic idea sahi hai, lekin answer incomplete hai. Missing point: "+miss.join(", "):"Basic idea sahi hai, lekin answer incomplete hai. Missing point: "+miss.join(", ")};
+  return {title:lang==="en-IN"?"Needs correction":lang==="hinglish"?"Answer ko correct karna hai":"Answer ko correct karna hai",body:lang==="en-IN"?"The answer did not cover the core concept. Here is the correct explanation:":lang==="hinglish"?"Core concept miss ho gaya. Correct explanation neeche hai:":"Core concept miss ho gaya. Correct explanation neeche hai:"};
+}
+function pickQuestion(){
+  const available=BANK.filter(q=>!used.has(q.id));
+  let pool=available.filter(q=>Math.abs(q.level-difficulty)<=1);
+  if(!pool.length)pool=available;
+  pool.sort((a,b)=>Math.abs(a.level-difficulty)-Math.abs(b.level-difficulty));
+  current=pool[Math.floor(Math.random()*Math.min(3,pool.length))];used.add(current.id);submitted=false;
+  renderQuestion();
 }
 function renderQuestion(){
-  const q=questions[current];
-  $("q-progress").textContent="Question "+(current+1)+" of "+questions.length;
-  $("q-score").textContent="Score: "+score;
-  $("q-bar").style.width=((current+1)/questions.length*100)+"%";
-  $("question").textContent=q[1];
-  $("category").textContent=q[0];
-  $("transcript").textContent="Your spoken answer will appear here...";
-  $("status").textContent=selectedLang==="hi-IN"?"Mic दबाकर answer बोलिए.":"Press the microphone and answer.";
-  $("next-question").textContent=current===questions.length-1?"Finish Interview":"Next Question";
-  speak(q[1]);
-}
-function setupRecognition(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){
-    $("status").textContent="Voice recognition is not supported in this browser. Please use Chrome or Edge.";
-    return null;
-  }
-  const r=new SR();
-  r.lang=selectedLang;
-  r.interimResults=true;
-  r.continuous=false;
-  r.onstart=()=>{listening=true;$("mic-btn").classList.add("listening");$("status").textContent=selectedLang==="hi-IN"?"Sun raha hoon... boliye.":"Listening... speak now.";};
-  r.onresult=e=>{
-    let text="";
-    for(let i=e.resultIndex;i<e.results.length;i++) text+=e.results[i][0].transcript;
-    $("transcript").textContent=text;
-  };
-  r.onerror=e=>{$("status").textContent="Microphone/voice error: "+e.error+". Try again.";listening=false;$("mic-btn").classList.remove("listening");};
-  r.onend=()=>{listening=false;$("mic-btn").classList.remove("listening");if($("transcript").textContent!=="Your spoken answer will appear here...") $("status").textContent="Answer captured. You can continue.";};
-  return r;
-}
-$("start-interview").onclick=()=>{
-  $("setup").classList.add("hidden");$("interview").classList.remove("hidden");
-  speak(speechMap[selectedLang].greet);
-  renderQuestion();
+  const n=history.length+1;$('qno').textContent="Question "+n;$('category').textContent=current.topic;$('level').textContent="Level: "+(difficulty===1?"Beginner":difficulty===2?"Intermediate":"Advanced");$('difficulty').textContent=current.level===3?"Challenge":current.level===2?"Core": "Diagnostic";$('topic').textContent=current.topic;$('question').textContent=text(current.q);$('meter').style.width=Math.min(100,(n/8)*100)+"%";$('followup').style.display="none";$('feedback').style.display="none";$('feedback').className="live-feedback";$('transcript').textContent="Your spoken answer will appear here...";$('status').textContent=label().listen;$('submit').disabled=false;speak(text(current.q));}
+function setupRecognition(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('status').textContent="Voice recognition is not supported. Please use Chrome or Edge.";return null}const r=new SR();r.lang=label().voice;r.interimResults=true;r.continuous=false;r.onstart=()=>{listening=true;$('mic').classList.add("listening");$('status').textContent=lang==="en-IN"?"Listening...":"Sun raha hoon..."};r.onresult=e=>{let s="";for(let i=e.resultIndex;i<e.results.length;i++)s+=e.results[i][0].transcript;$('transcript').textContent=s};r.onerror=e=>{$('status').textContent="Voice error: "+e.error;listening=false;$('mic').classList.remove("listening")};r.onend=()=>{listening=false;$('mic').classList.remove("listening");if($('transcript').textContent!=="Your spoken answer will appear here...")$('status').textContent=lang==="en-IN"?"Answer captured.":"Answer capture ho gaya."};return r}
+$('start').onclick=()=>{$('setup').classList.add("hidden");$('interview').classList.remove("hidden");speak(label().start);pickQuestion()};
+$('hear').onclick=()=>speak(text(current.q));
+$('mic').onclick=()=>{if(listening){recognition&&recognition.stop();return}recognition=setupRecognition();if(recognition)try{recognition.start()}catch(e){}};
+$('retry').onclick=()=>{$('transcript').textContent="Your spoken answer will appear here...";$('feedback').style.display="none";$('status').textContent=label().again};
+$('submit').onclick=()=>{
+  if(submitted)return;const ans=$('transcript').textContent;if(ans==="Your spoken answer will appear here..."){alert(lang==="en-IN"?"Please answer first.":"Pehle answer boliye.");return}
+  submitted=true;$('status').textContent=label().thinking;const result=evaluate(current,ans);score+=result.points;history.push({q:current,a:ans,result});
+  const fb=feedback(current,result);$('feedback').className="live-feedback "+result.status;$('feedback').innerHTML='<div class="feedback-title">'+fb.title+'</div><div class="feedback-body">'+fb.body+'</div><div class="correct-answer"><b>Correct explanation:</b> '+current.answer[lang]+'</div>';$('feedback').style.display="block";
+  if(result.status==="good")difficulty=Math.min(3,difficulty+1);else if(result.status==="bad")difficulty=Math.max(1,difficulty-1);
+  if(result.status!=="good"&&current.follow.length){$('followup').textContent=lang==="en-IN"?"Follow-up: I will test this concept once more.":lang==="hinglish"?"Follow-up: Is concept ko ek baar aur test karte hain.":"Follow-up: Is concept ko ek baar aur test karte hain.";$('followup').style.display="block"}
+  $('submit').disabled=true;$('status').textContent=result.status==="good"?"✓ "+(lang==="en-IN"?"Good answer. Next question will be harder.":lang==="hinglish"?"Good answer. Ab next question harder hoga.":"Achha answer. Ab next question harder hoga."):result.status==="partial"?"🟡 "+(lang==="en-IN"?"Incomplete answer. Read the correction above.":"Incomplete answer. Upar correction dekho."):"🔴 "+(lang==="en-IN"?"Review the correction above before continuing.":"Upar correct explanation dekho.");
+  setTimeout(()=>{if(history.length>=8)finish();else pickQuestion()},1200);
 };
-$("speak-btn").onclick=()=>speak(questions[current][1]);
-$("mic-btn").onclick=()=>{
-  if(listening){recognition&&recognition.stop();return;}
-  recognition=setupRecognition();
-  if(recognition){try{recognition.start()}catch(e){}}
-};
-$("retry-speech").onclick=()=>{if(recognition&&listening)recognition.stop();$("transcript").textContent="Your spoken answer will appear here...";$("status").textContent=selectedLang==="hi-IN"?"Phir se mic दबाकर boliye.":"Press the microphone and try again.";};
-$("next-question").onclick=()=>{
-  const answer=$("transcript").textContent;
-  if(answer==="Your spoken answer will appear here..."){alert(selectedLang==="hi-IN"?"Pehle answer boliye.":"Please answer using the microphone.");return;}
-  const ok=evaluate(answer,questions[current][3]);
-  if(ok) score++;
-  answers.push({question:questions[current][1],answer,ok});
-  if(current<questions.length-1){current++;renderQuestion();}
-  else{
-    $("interview").classList.add("hidden");$("result").classList.remove("hidden");
-    $("final-score").textContent=score;
-    $("final-message").textContent=(selectedLang==="hi-IN"?speechMap["hi-IN"].done+" ":"Great. Your interview is complete. ")+score+" / "+questions.length;
-    $("interview-review").innerHTML=answers.map((x,i)=>'<div class="feedback '+(x.ok?"good":"needs")+'"><b>Q'+(i+1)+'.</b> '+(x.ok?"Good answer":"Needs improvement")+'<br><span class="small">Your answer: '+x.answer.replace(/</g,"&lt;")+'</span></div>').join("");
-    speak(speechMap[selectedLang].done);
-  }
-};
+function finish(){
+ $('interview').classList.add("hidden");$('result').classList.remove("hidden");const total=history.length*10;const accuracy=Math.round(history.filter(x=>x.result.status==="good").length/history.length*100);const complete=Math.round(history.filter(x=>x.result.status!=="bad").length/history.length*100);const finalScore=Math.round(score/history.length*10);const lvl=finalScore>=80?"Advanced":finalScore>=60?"Intermediate":"Beginner";$('score').textContent=finalScore;$('result-level').textContent=lvl;$('accuracy').textContent=accuracy+"%";$('complete').textContent=complete+"%";$('final-level').textContent=lvl;$('result-msg').textContent=label().done+" "+(lang==="en-IN"?"Your weak and strong areas are visible below.":lang==="hinglish"?"Strong aur weak areas neeche diye gaye hain.":"Strong aur weak areas neeche diye gaye hain.");$('review').innerHTML=history.map((x,i)=>'<div class="review-row '+x.result.status+'"><b>Q'+(i+1)+'. '+x.q.topic+'</b><br><small>'+x.q.q.en+'</small><p><b>Your answer:</b> '+escapeHtml(x.a)+'</p><p><b>'+statusLabel(x.result.status)+'</b> — '+x.q.answer[lang]+'</p></div>').join("");speak(label().done)}
+function statusLabel(s){return s==="good"?"Strong answer ✓":s==="partial"?"Partially correct — improve completeness":"Needs correction"}
+function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
