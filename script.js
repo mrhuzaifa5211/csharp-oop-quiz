@@ -41,7 +41,7 @@ questions.forEach((q,i)=>{
   section.dataset.index=i;
   section.innerHTML="<h3>Q"+(i+1)+". "+q[1]+"</h3>"+q[2].map((o,j)=>'<label class="option"><input type="radio" name="q'+i+'" value="'+(j+1)+'"> '+String.fromCharCode(65+j)+". "+o+"</label>").join("");
   form.appendChild(section);
-  section.querySelectorAll("input").forEach(input=>input.addEventListener("change",()=>{selected[i]=Number(input.value);updateLive()}));
+  section.querySelectorAll("input").forEach(input=>input.addEventListener("change",()=>{if(selected[i]!==null)return;selected[i]=Number(input.value);section.querySelectorAll("input").forEach(r=>r.disabled=true);section.classList.add("locked");updateLive()}));
 });
 
 function updateLive(){
