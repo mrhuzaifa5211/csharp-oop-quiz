@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     if (!process.env.GEMINI_API_KEY) return res.status(500).json({ error: "Gemini API key is not configured in Vercel yet." });
     const prompt = "You are a helpful C#/.NET technical interviewer. Assess the candidate's answer by meaning, accept equivalent Hindi/Hinglish wording, identify incomplete or incorrect parts, and adapt difficulty. Return only a JSON object with verdict (correct/partial/incorrect), score (integer 0-10), explanation, correctAnswer, missingPoints (array), nextDifficulty (beginner/intermediate/advanced), and followUp (one relevant question). Respond in " + (language || "Hindi/Hinglish") + ". Question: " + question + "\nCandidate answer: " + answer + "\nCurrent level: " + (level || "beginner");
     const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
-    const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent", {
+    const requestGemini = () => fetch("https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent", {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
       body: JSON.stringify({
@@ -19,12 +19,22 @@ export default async function handler(req, res) {
         generationConfig: { responseMimeType: "application/json", temperature: 0.2 }
       })
     });
-    const data = await upstream.json();
+    let upstream = await requestGemini();
+    let data = await upstream.json();
+    // Retry once for temporary provider overload; do not repeatedly consume quota.
+    if (upstream.status === 503 || upstream.status === 502) {
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      upstream = await requestGemini();
+      data = await upstream.json();
+    }
     if (!upstream.ok) {
       const providerCode = data && data.error && data.error.status;
+      const providerMessage = data && data.error && data.error.message;
       console.error("Gemini API request failed", upstream.status, providerCode || "unknown");
-      const detail = providerCode ? " (" + upstream.status + ", " + String(providerCode).slice(0, 80) + ")" : " (" + upstream.status + ")";
-      return res.status(502).json({ error: "Gemini API request failed" + detail + ". Check the API key and its available quota." });
+      const detail = providerMessage
+        ? " (" + upstream.status + ": " + String(providerMessage).slice(0, 180) + ")"
+        : providerCode ? " (" + upstream.status + ", " + String(providerCode).slice(0, 80) + ")" : " (" + upstream.status + ")";
+      return res.status(502).json({ error: "Gemini API request failed" + detail + ". Please retry shortly; if it continues, check the API key/model access and quota." });
     }
     const raw = (data.candidates || []).flatMap(candidate => candidate.content && candidate.content.parts || []).map(part => part.text || "").join("").trim();
     if (!raw) return res.status(502).json({ error: "Gemini returned an empty response. Please try again." });
