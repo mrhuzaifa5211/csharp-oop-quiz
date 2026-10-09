@@ -16,7 +16,12 @@ export default async function handler(req, res) {
       body: JSON.stringify({ model: process.env.OPENAI_MODEL || "gpt-4.1-mini", input: prompt, text: { format: { type: "json_object" } } })
     });
     const data = await upstream.json();
-    if (!upstream.ok) { console.error("OpenAI API request failed", upstream.status); return res.status(502).json({ error: "AI provider request failed. Check API key permissions and billing." }); }
+    if (!upstream.ok) {
+      const providerCode = data && data.error && (data.error.code || data.error.type);
+      console.error("OpenAI API request failed", upstream.status, providerCode || "unknown");
+      const detail = providerCode ? " (" + upstream.status + ", " + String(providerCode).slice(0, 80) + ")" : " (" + upstream.status + ")";
+      return res.status(502).json({ error: "AI provider request failed" + detail + ". Check API key permissions and billing." });
+    }
     const raw = data.output_text || (data.output || []).flatMap(item => item.content || []).map(item => item.text || "").join("").trim();
     if (!raw) return res.status(502).json({ error: "AI returned an empty response" });
     const result = JSON.parse(raw);
@@ -28,5 +33,8 @@ export default async function handler(req, res) {
     result.missingPoints = Array.isArray(result.missingPoints) ? result.missingPoints : [];
     result.followUp = String(result.followUp || "");
     return res.status(200).json(result);
-  } catch (error) { console.error("Evaluation error", error.message); return res.status(500).json({ error: "Evaluation failed. Please try again." }); }
+  } catch (error) {
+    console.error("Evaluation error", error.message);
+    return res.status(500).json({ error: "Evaluation failed. Please try again." });
+  }
 }
