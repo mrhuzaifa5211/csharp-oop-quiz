@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     if (!question || !answer) return res.status(400).json({ error: "question and answer are required" });
     if (!process.env.GEMINI_API_KEY) return res.status(500).json({ error: "Gemini API key is not configured in Vercel yet." });
     const prompt = "You are a helpful C#/.NET technical interviewer. Assess the candidate's answer by meaning, accept equivalent Hindi/Hinglish wording, identify incomplete or incorrect parts, and adapt difficulty. Return only a JSON object with verdict (correct/partial/incorrect), score (integer 0-10), explanation, correctAnswer, missingPoints (array), nextDifficulty (beginner/intermediate/advanced), and followUp (one relevant question). Respond in " + (language || "Hindi/Hinglish") + ". Question: " + question + "\nCandidate answer: " + answer + "\nCurrent level: " + (level || "beginner");
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
+    const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
     const upstream = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent", {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
