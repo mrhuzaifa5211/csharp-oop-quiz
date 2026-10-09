@@ -136,7 +136,23 @@ $('submit').onclick = async () => {
       : verdict === "partial"
         ? (lang === "en-IN" ? "AI found a partially correct answer. Review the feedback." : "AI ne answer partially correct bataya. Feedback dekho.")
         : (lang === "en-IN" ? "AI found some errors. Review the correction." : "AI ne kuch errors bataye. Correction dekho.");
-    setTimeout(() => { if (history.length >= 8) finish(); else pickQuestion(); }, 2600);
+    $('submit').disabled = true;
+    $('status').textContent += " — " + (lang === "en-IN" ? "Click Next Question when ready." : "Jab ready ho, Next Question dabao.");
+    let nextButton = $('next-question');
+    if (!nextButton) {
+      nextButton = document.createElement("button");
+      nextButton.id = "next-question";
+      nextButton.type = "button";
+      nextButton.textContent = lang === "en-IN" ? "Next Question" : "Agla Question";
+      nextButton.style.marginTop = "12px";
+      $('feedback').appendChild(nextButton);
+    }
+    nextButton.textContent = lang === "en-IN" ? "Next Question" : "Agla Question";
+    nextButton.style.display = "inline-block";
+    nextButton.onclick = () => {
+      nextButton.style.display = "none";
+      if (history.length >= 8) finish(); else pickQuestion();
+    };
   } catch (error) {
     submitted = false;
     $('submit').disabled = false;
