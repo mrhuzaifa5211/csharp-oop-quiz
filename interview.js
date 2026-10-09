@@ -50,12 +50,32 @@ function feedback(q,result){
   if(result.status==="partial")return {title:lang==="en-IN"?"Partially correct — add one more point":lang==="hinglish"?"Partially correct — ek important point missing hai":"Partially correct — ek important point missing hai",body:lang==="en-IN"?"You have the basic idea, but the answer is incomplete. The missing point is: "+miss.join(", "):lang==="hinglish"?"Basic idea sahi hai, lekin answer incomplete hai. Missing point: "+miss.join(", "):"Basic idea sahi hai, lekin answer incomplete hai. Missing point: "+miss.join(", ")};
   return {title:lang==="en-IN"?"Needs correction":lang==="hinglish"?"Answer ko correct karna hai":"Answer ko correct karna hai",body:lang==="en-IN"?"The answer did not cover the core concept. Here is the correct explanation:":lang==="hinglish"?"Core concept miss ho gaya. Correct explanation neeche hai:":"Core concept miss ho gaya. Correct explanation neeche hai:"};
 }
+let pendingFollowUp = "";
 function pickQuestion(){
-  const available=BANK.filter(q=>!used.has(q.id));
-  let pool=available.filter(q=>Math.abs(q.level-difficulty)<=1);
-  if(!pool.length)pool=available;
-  pool.sort((a,b)=>Math.abs(a.level-difficulty)-Math.abs(b.level-difficulty));
-  current=pool[Math.floor(Math.random()*Math.min(3,pool.length))];used.add(current.id);submitted=false;
+  if (pendingFollowUp) {
+    const follow = pendingFollowUp;
+    pendingFollowUp = "";
+    current = {
+      id: "ai-follow-up-" + history.length,
+      topic: "AI Follow-up",
+      level: difficulty,
+      q: { "hi-IN": follow, "en-IN": follow, "hinglish": follow },
+      answer: { "hi-IN": "", "en-IN": "", "hinglish": "" },
+      keys: [], required: [], follow: []
+    };
+    used.add(current.id);
+    submitted = false;
+    renderQuestion();
+    return;
+  }
+  const available = BANK.filter(q => !used.has(q.id));
+  let pool = available.filter(q => Math.abs(q.level - difficulty) <= 1);
+  if (!pool.length) pool = available;
+  if (!pool.length) { finish(); return; }
+  pool.sort((a,b) => Math.abs(a.level-difficulty)-Math.abs(b.level-difficulty));
+  current = pool[Math.floor(Math.random() * Math.min(3,pool.length))];
+  used.add(current.id);
+  submitted = false;
   renderQuestion();
 }
 function renderQuestion(){
@@ -65,14 +85,66 @@ $('start').onclick=()=>{$('setup').classList.add("hidden");$('interview').classL
 $('hear').onclick=()=>speak(text(current.q));
 $('mic').onclick=()=>{if(listening){recognition&&recognition.stop();return}recognition=setupRecognition();if(recognition)try{recognition.start()}catch(e){}};
 $('retry').onclick=()=>{$('transcript').textContent="Your spoken answer will appear here...";$('feedback').style.display="none";$('status').textContent=label().again};
-$('submit').onclick=()=>{
-  if(submitted)return;const ans=$('transcript').textContent;if(ans==="Your spoken answer will appear here..."){alert(lang==="en-IN"?"Please answer first.":"Pehle answer boliye.");return}
-  submitted=true;$('status').textContent=label().thinking;const result=evaluate(current,ans);score+=result.points;history.push({q:current,a:ans,result});
-  const fb=feedback(current,result);$('feedback').className="live-feedback "+result.status;$('feedback').innerHTML='<div class="feedback-title">'+fb.title+'</div><div class="feedback-body">'+fb.body+'</div><div class="correct-answer"><b>Correct explanation:</b> '+current.answer[lang]+'</div>';$('feedback').style.display="block";
-  if(result.status==="good")difficulty=Math.min(3,difficulty+1);else if(result.status==="bad")difficulty=Math.max(1,difficulty-1);
-  if(result.status!=="good"&&current.follow.length){$('followup').textContent=lang==="en-IN"?"Follow-up: I will test this concept once more.":lang==="hinglish"?"Follow-up: Is concept ko ek baar aur test karte hain.":"Follow-up: Is concept ko ek baar aur test karte hain.";$('followup').style.display="block"}
-  $('submit').disabled=true;$('status').textContent=result.status==="good"?"✓ "+(lang==="en-IN"?"Good answer. Next question will be harder.":lang==="hinglish"?"Good answer. Ab next question harder hoga.":"Achha answer. Ab next question harder hoga."):result.status==="partial"?"🟡 "+(lang==="en-IN"?"Incomplete answer. Read the correction above.":"Incomplete answer. Upar correction dekho."):"🔴 "+(lang==="en-IN"?"Review the correction above before continuing.":"Upar correct explanation dekho.");
-  setTimeout(()=>{if(history.length>=8)finish();else pickQuestion()},1200);
+$('submit').onclick = async () => {
+  if (submitted) return;
+  const ans = $('transcript').textContent;
+  if (ans === "Your spoken answer will appear here...") {
+    alert(lang === "en-IN" ? "Please answer first." : "Pehle answer boliye.");
+    return;
+  }
+  submitted = true;
+  $('submit').disabled = true;
+  $('status').textContent = label().thinking;
+  try {
+    const response = await fetch("https://csharp-oop-quiz-three.vercel.app/api/evaluate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question: text(current.q),
+        answer: ans,
+        language: lang === "hi-IN" ? "Hindi" : lang === "hinglish" ? "Hinglish" : "English",
+        level: difficulty === 1 ? "beginner" : difficulty === 2 ? "intermediate" : "advanced"
+      })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "AI evaluation failed");
+    const verdict = data.verdict === "correct" ? "good" : data.verdict === "partial" ? "partial" : "bad";
+    const result = { status: verdict, points: Number(data.score) || 0, explanation: data.explanation || "", correctAnswer: data.correctAnswer || "", missingPoints: Array.isArray(data.missingPoints) ? data.missingPoints : [] };
+    score += result.points;
+    history.push({ q: current, a: ans, result });
+    const title = verdict === "good"
+      ? (lang === "en-IN" ? "Strong answer ✓" : "Achha answer ✓")
+      : verdict === "partial"
+        ? (lang === "en-IN" ? "Partially correct — improve completeness" : "Partially correct — kuch points missing hain")
+        : (lang === "en-IN" ? "Needs correction" : "Answer ko correct karna hai");
+    const details = [result.explanation, result.missingPoints.length ? (lang === "en-IN" ? "Missing points: " : "Missing points: ") + result.missingPoints.join("; ") : ""].filter(Boolean).join("\n");
+    $('feedback').className = "live-feedback " + verdict;
+    $('feedback').innerHTML = '<div class="feedback-title">' + escapeHtml(title) + '</div><div class="feedback-body">' + escapeHtml(details) + '</div><div class="correct-answer"><b>AI correction:</b> ' + escapeHtml(result.correctAnswer || "No correction provided.") + '</div>';
+    $('feedback').style.display = "block";
+    if (data.nextDifficulty === "advanced") difficulty = 3;
+    else if (data.nextDifficulty === "intermediate") difficulty = 2;
+    else if (data.nextDifficulty === "beginner") difficulty = 1;
+    pendingFollowUp = String(data.followUp || "").trim();
+    if (pendingFollowUp) {
+      $('followup').textContent = (lang === "en-IN" ? "AI follow-up: " : "AI follow-up: ") + pendingFollowUp;
+      $('followup').style.display = "block";
+    } else {
+      $('followup').style.display = "none";
+    }
+    $('status').textContent = verdict === "good"
+      ? (lang === "en-IN" ? "✓ AI says your answer is correct." : "✓ AI ke hisaab se answer sahi hai.")
+      : verdict === "partial"
+        ? (lang === "en-IN" ? "AI found a partially correct answer. Review the feedback." : "AI ne answer partially correct bataya. Feedback dekho.")
+        : (lang === "en-IN" ? "AI found some errors. Review the correction." : "AI ne kuch errors bataye. Correction dekho.");
+    setTimeout(() => { if (history.length >= 8) finish(); else pickQuestion(); }, 2600);
+  } catch (error) {
+    submitted = false;
+    $('submit').disabled = false;
+    $('status').textContent = "AI connection error: " + error.message;
+    $('feedback').className = "live-feedback bad";
+    $('feedback').innerHTML = '<div class="feedback-title">AI connection failed</div><div class="feedback-body">' + escapeHtml(error.message) + '</div><div class="correct-answer">Please check the Vercel deployment, API key permissions, and API billing, then try again.</div>';
+    $('feedback').style.display = "block";
+  }
 };
 function finish(){
  $('interview').classList.add("hidden");$('result').classList.remove("hidden");const total=history.length*10;const accuracy=Math.round(history.filter(x=>x.result.status==="good").length/history.length*100);const complete=Math.round(history.filter(x=>x.result.status!=="bad").length/history.length*100);const finalScore=Math.round(score/history.length*10);const lvl=finalScore>=80?"Advanced":finalScore>=60?"Intermediate":"Beginner";$('score').textContent=finalScore;$('result-level').textContent=lvl;$('accuracy').textContent=accuracy+"%";$('complete').textContent=complete+"%";$('final-level').textContent=lvl;$('result-msg').textContent=label().done+" "+(lang==="en-IN"?"Your weak and strong areas are visible below.":lang==="hinglish"?"Strong aur weak areas neeche diye gaye hain.":"Strong aur weak areas neeche diye gaye hain.");$('review').innerHTML=history.map((x,i)=>'<div class="review-row '+x.result.status+'"><b>Q'+(i+1)+'. '+x.q.topic+'</b><br><small>'+x.q.q.en+'</small><p><b>Your answer:</b> '+escapeHtml(x.a)+'</p><p><b>'+statusLabel(x.result.status)+'</b> — '+x.q.answer[lang]+'</p></div>').join("");speak(label().done)}
