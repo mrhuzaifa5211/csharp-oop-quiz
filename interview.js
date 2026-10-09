@@ -109,6 +109,9 @@ $('submit').onclick = async () => {
       body: JSON.stringify({
         question: text(current.q),
         answer: ans,
+        dayNumber: Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000),
+        questionNumber: history.length + 1,
+        recentQuestions: history.slice(-12).map(item => item.q.q.en || item.q.topic),
         language: lang === "hi-IN" ? "Hindi" : lang === "hinglish" ? "Hinglish" : "English",
         level: difficulty === 1 ? "beginner" : difficulty === 2 ? "intermediate" : "advanced"
       })
@@ -131,7 +134,7 @@ $('submit').onclick = async () => {
     if (data.nextDifficulty === "advanced") difficulty = 3;
     else if (data.nextDifficulty === "intermediate") difficulty = 2;
     else if (data.nextDifficulty === "beginner") difficulty = 1;
-    pendingFollowUp = String(data.followUp || "").trim();
+    pendingFollowUp = String(data.nextQuestion || data.followUp || "").trim();
     if (pendingFollowUp) {
       $('followup').textContent = (lang === "en-IN" ? "AI follow-up: " : "AI follow-up: ") + pendingFollowUp;
       $('followup').style.display = "block";
