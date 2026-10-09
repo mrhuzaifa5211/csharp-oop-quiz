@@ -68,10 +68,13 @@ function pickQuestion(){
     renderQuestion();
     return;
   }
-  const available = BANK.filter(q => !used.has(q.id));
+  let available = BANK.filter(q => !used.has(q.id));
+  if (!available.length) {
+    used = new Set();
+    available = BANK.filter(q => !used.has(q.id));
+  }
   let pool = available.filter(q => Math.abs(q.level - difficulty) <= 1);
   if (!pool.length) pool = available;
-  if (!pool.length) { finish(); return; }
   pool.sort((a,b) => Math.abs(a.level-difficulty)-Math.abs(b.level-difficulty));
   current = pool[Math.floor(Math.random() * Math.min(3,pool.length))];
   used.add(current.id);
@@ -79,7 +82,7 @@ function pickQuestion(){
   renderQuestion();
 }
 function renderQuestion(){
-  const n=history.length+1;$('qno').textContent="Question "+n;$('category').textContent=current.topic;$('level').textContent="Level: "+(difficulty===1?"Beginner":difficulty===2?"Intermediate":"Advanced");$('difficulty').textContent=current.level===3?"Challenge":current.level===2?"Core": "Diagnostic";$('topic').textContent=current.topic;$('question').textContent=text(current.q);$('meter').style.width=Math.min(100,(n/8)*100)+"%";$('followup').style.display="none";const nextBtn=$('next-question');if(nextBtn)nextBtn.style.display="none";$('feedback').style.display="none";$('feedback').className="live-feedback";$('transcript').textContent="Your spoken answer will appear here...";$('status').textContent=label().listen;$('submit').disabled=false;speak(text(current.q));}
+  const n=history.length+1;$('qno').textContent="Question "+n;$('category').textContent=current.topic;$('level').textContent="Level: "+(difficulty===1?"Beginner":difficulty===2?"Intermediate":"Advanced");$('difficulty').textContent=current.level===3?"Challenge":current.level===2?"Core": "Diagnostic";$('topic').textContent=current.topic;$('question').textContent=text(current.q);$('meter').style.width=(((n-1)%20+1)/20*100)+"%";$('followup').style.display="none";const nextBtn=$('next-question');if(nextBtn)nextBtn.style.display="none";$('feedback').style.display="none";$('feedback').className="live-feedback";$('transcript').textContent="Your spoken answer will appear here...";$('status').textContent=label().listen;$('submit').disabled=false;speak(text(current.q));}
 function setupRecognition(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$('status').textContent="Voice recognition is not supported. Please use Chrome or Edge.";return null}const r=new SR();r.lang=label().voice;r.interimResults=true;r.continuous=false;r.onstart=()=>{listening=true;$('mic').classList.add("listening");$('status').textContent=lang==="en-IN"?"Listening...":"Sun raha hoon..."};r.onresult=e=>{let s="";for(let i=e.resultIndex;i<e.results.length;i++)s+=e.results[i][0].transcript;$('transcript').textContent=s};r.onerror=e=>{$('status').textContent="Voice error: "+e.error;listening=false;$('mic').classList.remove("listening")};r.onend=()=>{listening=false;$('mic').classList.remove("listening");if($('transcript').textContent!=="Your spoken answer will appear here...")$('status').textContent=lang==="en-IN"?"Answer captured.":"Answer capture ho gaya."};return r}
 $('start').onclick=()=>{$('setup').classList.add("hidden");$('interview').classList.remove("hidden");speak(label().start);pickQuestion()};
 $('hear').onclick=()=>speak(text(current.q));
@@ -151,7 +154,7 @@ $('submit').onclick = async () => {
     nextButton.style.display = "inline-block";
     nextButton.onclick = () => {
       nextButton.style.display = "none";
-      if (history.length >= 8) finish(); else pickQuestion();
+      pickQuestion();
     };
   } catch (error) {
     submitted = false;
